@@ -1,15 +1,19 @@
 import * as model from './model.js';
 import recipeView from './vievs/recipeView.js';
 import searchView from './vievs/searchView.js';
+import resultsView from './vievs/resultsView.js';
 
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import { async } from 'regenerator-runtime';
 
+if (module.hot) {
+  module.hot.accept();
+}
+
 const contolRecipes = async function () {
   try {
     const id = window.location.hash.slice(1);
-    console.log(id);
 
     if (!id) return;
     recipeView.renderSpinner();
@@ -26,11 +30,16 @@ const contolRecipes = async function () {
 
 const controlSearchResult = async function () {
   try {
+    resultsView.renderSpinner();
+    //1. Get search query
     const query = searchView.getQuery();
     if (!query) return;
 
-    model.controlSearchResult('pizza');
-    console.log(model.state.search.results);
+    //2. Load search results
+    await model.loadSearchResults(query);
+
+    //3. Render results
+    resultsView.render(model.state.search.results);
   } catch (err) {
     console.log(err);
   }
