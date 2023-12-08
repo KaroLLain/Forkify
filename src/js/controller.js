@@ -1,30 +1,17 @@
-import * as model from '.model.js';
+import * as model from './model.js';
 import recipeView from './vievs/recipeView.js';
+import searchView from './vievs/searchView.js';
 
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
+import { async } from 'regenerator-runtime';
 
-const recipeContainer = document.querySelector('.recipe');
-
-const timeout = function (s) {
-  return new Promise(function (_, reject) {
-    setTimeout(function () {
-      reject(new Error(`Request took too long! Timeout after ${s} second`));
-    }, s * 1000);
-  });
-};
-
-// https://forkify-api.herokuapp.com/v2
-
-///////////////////////////////////////
-
-
-const contolRecipes = async function() {
-  try{
+const contolRecipes = async function () {
+  try {
     const id = window.location.hash.slice(1);
     console.log(id);
 
-    if(!id) return;
+    if (!id) return;
     recipeView.renderSpinner();
 
     //Loading recipe
@@ -32,13 +19,25 @@ const contolRecipes = async function() {
 
     //Rendering recipe
     recipeView.render(model.state.recipe);
-
-  } catch(err) {
+  } catch (err) {
     recipeView.renderError();
   }
 };
 
-const init = function() {
+const controlSearchResult = async function () {
+  try {
+    const query = searchView.getQuery();
+    if (!query) return;
+
+    model.controlSearchResult('pizza');
+    console.log(model.state.search.results);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const init = function () {
   recipeView.addHandlerRender(contolRecipes);
+  searchView.addHandlerSearch(controlSearchResult);
 };
 init();
