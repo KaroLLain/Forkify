@@ -2,6 +2,7 @@ import * as model from './model.js';
 import recipeView from './vievs/recipeView.js';
 import searchView from './vievs/searchView.js';
 import resultsView from './vievs/resultsView.js';
+import paginationView from './vievs/paginationView.js';
 
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
@@ -39,14 +40,26 @@ const controlSearchResult = async function () {
     await model.loadSearchResults(query);
 
     //3. Render results
-    resultsView.render(model.getSearchResultsPage());
+    resultsView.render(model.getSearchResultsPage(1));
+
+    //4. Render initial pagination buttons
+    paginationView.render(model.state.search);
   } catch (err) {
     console.log(err);
   }
 };
 
+const controlPagination = function (goToPage) {
+  //3. Render new results
+  resultsView.render(model.getSearchResultsPage(goToPage));
+
+  //4. Render new pagination buttons
+  paginationView.render(model.state.search);
+};
+
 const init = function () {
   recipeView.addHandlerRender(contolRecipes);
   searchView.addHandlerSearch(controlSearchResult);
+  paginationView.addHandlerClick(controlPagination);
 };
 init();
