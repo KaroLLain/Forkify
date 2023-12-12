@@ -50,7 +50,8 @@ const controlPagination = function (goToPage) {
   resultsView.render(model.getSearchResultsPage(goToPage));
 
   //4. Render new pagination buttons
-  paginationView.render(model.state.search);
+  // paginationView.render(model.state.search);
+  paginationView.update(model.state.search);
 };
 
 const controlServings = function (newServings) {

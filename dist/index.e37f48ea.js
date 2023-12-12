@@ -621,7 +621,8 @@ const controlPagination = function(goToPage) {
     //3. Render new results
     (0, _resultsViewJsDefault.default).render(_modelJs.getSearchResultsPage(goToPage));
     //4. Render new pagination buttons
-    (0, _paginationViewJsDefault.default).render(_modelJs.state.search);
+    // paginationView.render(model.state.search);
+    (0, _paginationViewJsDefault.default).update(_modelJs.state.search);
 };
 const controlServings = function(newServings) {
     //Update recipe servings(in state)
@@ -2735,6 +2736,13 @@ class View {
         const markup = this._generateMarkup();
         this._clear();
         this._parentElement.insertAdjacentHTML("afterbegin", markup);
+    }
+    update(data) {
+        if (!data || Array.isArray(data) && data.length === 0) return this.renderError();
+        this._data = data;
+        const newMarkup = this._generateMarkup();
+        const newDOM = document.createRange().createContextualFragment(newMarkup);
+        const newElements = newDOM.querySelectorAll("*");
     }
     _clear() {
         this._parentElement.innerHTML = "";
