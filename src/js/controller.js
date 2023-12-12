@@ -3,6 +3,8 @@ import recipeView from './vievs/recipeView.js';
 import searchView from './vievs/searchView.js';
 import resultsView from './vievs/resultsView.js';
 import paginationView from './vievs/paginationView.js';
+import bookmarksView from './vievs/bookmarksView.js';
+import addRecipeView from './vievs/addRecipeView.js';
 
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
@@ -15,8 +17,11 @@ const contolRecipes = async function () {
     if (!id) return;
     recipeView.renderSpinner();
 
-    // 0. Update results view to mark selected search result
+    // Update results view to mark selected search result
     resultsView.update(model.getSearchResultsPage());
+
+    //Updating bookmarks view
+    bookmarksView.update(model.state.bookmarks);
 
     //Loading recipe
     await model.loadRecipe(id);
@@ -65,17 +70,32 @@ const controlServings = function (newServings) {
 };
 
 const controlAddBookmark = function () {
+  // Add or remove bookmark
   if (!model.state.recipe.bookmarked) model.addBookmark(model.state.recipe);
   else model.deleteBookmark(model.state.recipe.id);
 
+  //Update recipe view
   recipeView.update(model.state.recipe);
+
+  //Render bookmarks
+  bookmarksView.render(model.state.bookmarks);
+};
+
+const controlBookmarks = function () {
+  bookmarksView.render(model.state.bookmarks);
+};
+
+const controllAddRecipe = function (newRecipe) {
+  console.log(newRecipe);
 };
 
 const init = function () {
+  bookmarksView.addHandlerRender(controlBookmarks);
   recipeView.addHandlerRender(contolRecipes);
   recipeView.addHandlerUpdateServings(controlServings);
   recipeView.addHandlerAddBookmark(controlAddBookmark);
   searchView.addHandlerSearch(controlSearchResult);
   paginationView.addHandlerClick(controlPagination);
+  addRecipeView.addHandlerUpload(controllAddRecipe);
 };
 init();
